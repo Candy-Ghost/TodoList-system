@@ -6,6 +6,7 @@ from tortoise import Tortoise, fields, run_async
 from tortoise.models import Model
 from api.user_api import user_api
 from api.index_api import index_api
+
 app=FastAPI()
 
 app.include_router(user_api,tags=['账号管理api接口'],)
