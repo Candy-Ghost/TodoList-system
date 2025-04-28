@@ -6,8 +6,17 @@ from tortoise import Tortoise, fields, run_async
 from tortoise.models import Model
 from api.user_api import user_api
 from api.index_api import index_api
+from fastapi.middleware.cors import CORSMiddleware
 
 app=FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # 可以根据需要替换为具体的域名
+    allow_credentials=True,
+    allow_methods=["*"],  # 允许所有方法，包括OPTIONS
+    allow_headers=["*"],
+)
 
 app.include_router(user_api,tags=['账号管理api接口'],)
 app.include_router(index_api,prefix="/user",tags=['主页接口'],)

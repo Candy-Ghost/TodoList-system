@@ -3,25 +3,10 @@ from pydantic import BaseModel, field_validator
 from JWTYZ import create_token,verify_token
 from api.user_api import user_api
 from models import *
-from datetime import datetime
+from api.index_class import *
 
 index_api=APIRouter()
 
-class add_todo (BaseModel):
-    title:str
-    content: str
-    state:str="未完成"
-    # @field_validator("password")
-    # def validate_password(cls, value: int) -> int:
-    #     if not (100000 <= value <= 999999999):
-    #         raise ValueError("密码6-9位")
-    #     return value  # 可以修改值
-
-class up_todo (BaseModel):
-    title: str
-    content: str
-    updated:str=datetime.now()
-    state: str = "未完成"
 
 
 def get_token(date=Depends(verify_token)):
@@ -48,7 +33,7 @@ async def get_index(username: dict = Depends( get_token)):
 
 
 @index_api.post("/add", summary="添加todo")
-async def add_todo(todo_data: add_todo,username: dict = Depends(get_token)  # 确保返回 {'username': 'xxx'}
+async def add_todo(todo_data: Add_todo,username: dict = Depends(get_token)  # 确保返回 {'username': 'xxx'}
 ):
     user = await Users.filter(username=username['username']).first()
     if not user:
@@ -68,12 +53,12 @@ async def add_todo(todo_data: add_todo,username: dict = Depends(get_token)  # �
     return {"操作": "添加成功"}
 
 @index_api.put("/uptodo/{id1}",summary="修改todo")
-async def update_todo(id1,up_Todo:up_todo,username: dict = Depends(get_token)):
+async def update_todo(id1,up_todo:Update_todo,username: dict = Depends(get_token)):
     try:
         user= await Users.get(username=username['username'])
         user_id=user.id
         print(user_id)
-        data = up_Todo.dict()
+        data = up_todo.dict()
         print(data)
         await Tasks.filter(id=id1,users_id=user.id,).update(**data)
         return {"操作": "修改成功"}
